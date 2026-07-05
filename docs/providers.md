@@ -218,7 +218,9 @@ How the Claude provider works:
   treated as no override because Claude does not accept `--effort none`.
 - `skipGitRepoCheck`: Claude has no equivalent flag, so this option is a no-op
   for the Claude provider.
-- Timeout: 180 seconds by default, override with `CLAWPATCH_CLAUDE_TIMEOUT_MS`
+- Timeout: 1200 seconds (20 minutes) by default — the provider runs the full
+  Claude Code agentic loop, so a real review can take many minutes plus any
+  subscription rate-limit waits. Override with `CLAWPATCH_CLAUDE_TIMEOUT_MS`
   or `CLAWPATCH_PROVIDER_TIMEOUT_MS`.
 
 Permission caveat: Claude tool restrictions are enforced by Claude Code, and

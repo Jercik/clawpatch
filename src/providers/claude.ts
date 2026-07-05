@@ -24,7 +24,12 @@ import {
   type ReasoningEffort,
 } from "../types.js";
 
-const CLAUDE_DEFAULT_TIMEOUT_MS = 180_000;
+// The Claude provider runs the full Claude Code agentic loop (not a single API
+// call), so a real review can take many minutes — plus any subscription
+// rate-limit waits in host auth context. Hence a 20-minute default, far above
+// the other providers. Override with CLAWPATCH_CLAUDE_TIMEOUT_MS /
+// CLAWPATCH_PROVIDER_TIMEOUT_MS.
+const CLAUDE_DEFAULT_TIMEOUT_MS = 1_200_000;
 const CLAUDE_READ_ONLY_TOOLS = "Read,Grep,Glob";
 const CLAUDE_WRITE_TOOLS = "default";
 const CLAUDE_SAFE_MODE_MIN_VERSION: [number, number, number] = [2, 1, 169];

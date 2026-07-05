@@ -1195,7 +1195,7 @@ describe("Claude provider helpers", () => {
   it("uses Claude-specific timeout before generic provider timeout", () => {
     delete process.env["CLAWPATCH_CLAUDE_TIMEOUT_MS"];
     delete process.env["CLAWPATCH_PROVIDER_TIMEOUT_MS"];
-    expect(claudeTimeoutMs()).toBe(180_000);
+    expect(claudeTimeoutMs()).toBe(1_200_000);
 
     process.env["CLAWPATCH_PROVIDER_TIMEOUT_MS"] = "2000";
     expect(claudeTimeoutMs()).toBe(2000);
@@ -1204,7 +1204,7 @@ describe("Claude provider helpers", () => {
     expect(claudeTimeoutMs()).toBe(3000);
 
     process.env["CLAWPATCH_CLAUDE_TIMEOUT_MS"] = "bad";
-    expect(claudeTimeoutMs()).toBe(180_000);
+    expect(claudeTimeoutMs()).toBe(1_200_000);
   });
 });
 

@@ -4,6 +4,7 @@
 
 - Fixed revalidation prompts to compact historical and feature metadata and hard-cap metadata lists even when configured file limits are high, preventing provider input overflows, thanks @pai-scaffolde.
 - Added an opt-in Claude host auth context that preserves the default-deny environment, uses Claude Code safe mode, validates auth through doctor, and reports redacted OAuth failure signals, thanks @grantjayy.
+- Raised the Claude provider default timeout from 3 to 20 minutes, since it runs the full Claude Code agentic loop and can wait on subscription rate limits. Override with `CLAWPATCH_CLAUDE_TIMEOUT_MS` or `CLAWPATCH_PROVIDER_TIMEOUT_MS`.
 
 ## 0.7.0 - 2026-06-15
 
