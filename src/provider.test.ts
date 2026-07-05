@@ -35,6 +35,7 @@ const {
   extractCursorJson,
   extractClaudeStructuredOutput,
   extractOpencodeJson,
+  opencodeArgs,
   parseAcpxJsonOutput,
   parseAcpxAgent,
   parseClaudeVersion,
@@ -1599,6 +1600,72 @@ describe("acpxFailureMessage", () => {
     expect(message).toContain("message=Timed out after 500ms");
     expect(message).not.toContain(secretPrompt);
     expect(message).not.toContain("session/prompt");
+  });
+});
+
+describe("opencodeArgs", () => {
+  it("builds read-only args without model, variant, or permission skip", () => {
+    const args = opencodeArgs(
+      "/repo",
+      "/tmp/prompt.txt",
+      { model: null, reasoningEffort: null, skipGitRepoCheck: false },
+      true,
+    );
+
+    expect(args).toEqual([
+      "run",
+      "Follow the attached clawpatch prompt. Return only the requested JSON object.",
+      "--format",
+      "json",
+      "--dir",
+      "/repo",
+      "--file=/tmp/prompt.txt",
+    ]);
+  });
+
+  it("passes model and reasoning effort as an opencode variant", () => {
+    const args = opencodeArgs(
+      "/repo",
+      "/tmp/prompt.txt",
+      { model: "anthropic/claude-sonnet-5", reasoningEffort: "xhigh", skipGitRepoCheck: false },
+      true,
+    );
+
+    expect(args.slice(7)).toEqual([
+      "--model",
+      "anthropic/claude-sonnet-5",
+      "--variant",
+      "xhigh",
+    ]);
+  });
+
+  it("passes none verbatim so models with a none variant disable reasoning", () => {
+    const args = opencodeArgs(
+      "/repo",
+      "/tmp/prompt.txt",
+      { model: null, reasoningEffort: "none", skipGitRepoCheck: false },
+      true,
+    );
+
+    expect(args.slice(7)).toEqual(["--variant", "none"]);
+  });
+
+  it("adds --dangerously-skip-permissions only for write operations", () => {
+    const readOnly = opencodeArgs(
+      "/repo",
+      "/tmp/prompt.txt",
+      { model: null, reasoningEffort: null, skipGitRepoCheck: false },
+      true,
+    );
+    const write = opencodeArgs(
+      "/repo",
+      "/tmp/prompt.txt",
+      { model: null, reasoningEffort: null, skipGitRepoCheck: false },
+      false,
+    );
+
+    expect(readOnly).not.toContain("--dangerously-skip-permissions");
+    expect(write).toContain("--dangerously-skip-permissions");
   });
 });
 

@@ -91,6 +91,7 @@ The `opencode` provider shells out to the local [OpenCode CLI](https://opencode.
 - output: parsed from JSONL `text` events
 - read-only operations: set `OPENCODE_PERMISSION` to deny edit, shell, subagent, and web tools
 - model selection: `--model <provider/model>`
+- reasoning effort: `--variant <effort>`
 
 Provider selection:
 
@@ -99,6 +100,19 @@ clawpatch review --provider opencode --model opencode/big-pickle
 CLAWPATCH_PROVIDER=opencode CLAWPATCH_MODEL=opencode/big-pickle clawpatch review
 clawpatch fix --finding <id> --provider opencode
 ```
+
+Reasoning effort selection:
+
+```bash
+clawpatch review --provider opencode --reasoning-effort xhigh
+CLAWPATCH_PROVIDER=opencode CLAWPATCH_REASONING_EFFORT=xhigh clawpatch review
+```
+
+When `reasoningEffort` is unset, Clawpatch does not pass a variant and OpenCode
+uses the model's default. Explicit values are passed verbatim as
+`--variant <effort>`. OpenCode defines variants per model and silently ignores
+a variant name the selected model does not expose, so an unsupported effort
+falls back to the model's default reasoning behavior instead of failing.
 
 Permission caveat: OpenCode permissions are configuration-driven. Clawpatch
 sets a restrictive `OPENCODE_PERMISSION` for review and revalidate, and uses

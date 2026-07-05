@@ -35,7 +35,7 @@ export const opencodeProvider: Provider = {
     return result.stdout.trim();
   },
   async map(root: string, prompt: string, options: ProviderOptions): Promise<AgentMapOutput> {
-    const output = await runOpencodeJson(root, prompt, options.model, agentMapJsonSchema, true);
+    const output = await runOpencodeJson(root, prompt, options, agentMapJsonSchema, true);
     return parseOrThrow(agentMapOutputSchema, output, "opencode agent-map");
   },
   async review(
@@ -43,11 +43,11 @@ export const opencodeProvider: Provider = {
     prompt: string,
     options: ProviderOptions,
   ): Promise<PartitionedReviewOutput> {
-    const output = await runOpencodeJson(root, prompt, options.model, reviewJsonSchema, true);
+    const output = await runOpencodeJson(root, prompt, options, reviewJsonSchema, true);
     return parseReviewOutput(output);
   },
   async fix(root: string, prompt: string, options: ProviderOptions): Promise<FixPlanOutput> {
-    const output = await runOpencodeJson(root, prompt, options.model, fixPlanJsonSchema, false);
+    const output = await runOpencodeJson(root, prompt, options, fixPlanJsonSchema, false);
     return parseOrThrow(fixPlanOutputSchema, output, "opencode fix-plan");
   },
   async revalidate(
@@ -55,7 +55,7 @@ export const opencodeProvider: Provider = {
     prompt: string,
     options: ProviderOptions,
   ): Promise<RevalidateOutput> {
-    const output = await runOpencodeJson(root, prompt, options.model, revalidateJsonSchema, true);
+    const output = await runOpencodeJson(root, prompt, options, revalidateJsonSchema, true);
     return parseOrThrow(revalidateOutputSchema, output, "opencode revalidate");
   },
 };
@@ -68,10 +68,40 @@ const OPENCODE_READ_ONLY_PERMISSION = JSON.stringify({
   websearch: "deny",
 });
 
+function opencodeArgs(
+  root: string,
+  promptPath: string,
+  options: ProviderOptions,
+  readOnly: boolean,
+): string[] {
+  const args = [
+    "run",
+    "Follow the attached clawpatch prompt. Return only the requested JSON object.",
+    "--format",
+    "json",
+    "--dir",
+    root,
+    `--file=${promptPath}`,
+  ];
+  if (options.model !== null) {
+    args.push("--model", options.model);
+  }
+  if (options.reasoningEffort !== null) {
+    // OpenCode exposes reasoning effort as per-model "variants" whose names
+    // match Clawpatch's effort values, and silently ignores a variant name
+    // the selected model does not expose.
+    args.push("--variant", options.reasoningEffort);
+  }
+  if (!readOnly) {
+    args.push("--dangerously-skip-permissions");
+  }
+  return args;
+}
+
 async function runOpencodeJson(
   root: string,
   prompt: string,
-  model: string | null,
+  options: ProviderOptions,
   schema: object,
   readOnly: boolean,
 ): Promise<unknown> {
@@ -79,21 +109,7 @@ async function runOpencodeJson(
   const promptPath = join(dir, "prompt.txt");
   try {
     await writeFile(promptPath, opencodePrompt(prompt, schema, readOnly), "utf8");
-    const args = [
-      "run",
-      "Follow the attached clawpatch prompt. Return only the requested JSON object.",
-      "--format",
-      "json",
-      "--dir",
-      root,
-      `--file=${promptPath}`,
-    ];
-    if (model !== null) {
-      args.push("--model", model);
-    }
-    if (!readOnly) {
-      args.push("--dangerously-skip-permissions");
-    }
+    const args = opencodeArgs(root, promptPath, options, readOnly);
     const result = await runCommandArgs(
       "opencode",
       args,
@@ -210,4 +226,4 @@ function opencodeFailureMessage(stdout: string, stderr: string): string {
     : `opencode provider failed (stdout preview: ${preview})`;
 }
 
-export const opencodeTesting = { extractOpencodeJson };
+export const opencodeTesting = { extractOpencodeJson, opencodeArgs };
