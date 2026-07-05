@@ -250,6 +250,10 @@ function claudeEnv(
     env["HOME"] = process.env["HOME"]?.trim() || homedir();
     copyEnv(env, "USERPROFILE");
     copyEnv(env, "CLAUDE_CONFIG_DIR");
+    // Claude Code looks up the macOS Keychain item "Claude Code-credentials"
+    // by the USER account name; without it, keychain-stored subscription
+    // logins report "Not logged in".
+    copyEnv(env, "USER");
   } else {
     env["HOME"] = join(baseDir, "home");
   }

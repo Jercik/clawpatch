@@ -824,6 +824,7 @@ describe("Claude provider helpers", () => {
     process.env = {
       PATH: "/bin",
       HOME: "/host-home",
+      USER: "operator",
       USERPROFILE: "C:\\Users\\operator",
       CLAUDE_CONFIG_DIR: "/host-claude-config",
       CLAUDE_CODE_OAUTH_TOKEN: "oauth-token",
@@ -835,6 +836,7 @@ describe("Claude provider helpers", () => {
     expect(claudeEnv(true, "/tmp/claude", "host")).toEqual({
       PATH: "/bin",
       HOME: "/host-home",
+      USER: "operator",
       USERPROFILE: "C:\\Users\\operator",
       CLAUDE_CONFIG_DIR: "/host-claude-config",
       XDG_CONFIG_HOME: "/tmp/claude/xdg-config",

@@ -210,9 +210,11 @@ How the Claude provider works:
   forwarded only when `AWS_CONFIG_FILE` or `AWS_SHARED_CREDENTIALS_FILE` points
   at explicit profile files.
 - Host auth context: `CLAWPATCH_CLAUDE_AUTH_CONTEXT=host` replaces `--bare`
-  with Claude Code `--safe-mode`, exposes only the host `HOME`/`USERPROFILE`
-  and optional `CLAUDE_CONFIG_DIR` auth locators, and permits
-  `CLAUDE_CODE_OAUTH_TOKEN`. It does not inherit the whole host environment;
+  with Claude Code `--safe-mode`, exposes only the host `HOME`/`USER`/
+  `USERPROFILE` and optional `CLAUDE_CONFIG_DIR` auth locators, and permits
+  `CLAUDE_CODE_OAUTH_TOKEN`. `USER` is required on macOS, where Claude Code
+  looks up the keychain credentials item by that account name. It does not
+  inherit the whole host environment;
   the auth allowlist, temporary XDG/cache/data directories, subprocess env
   scrubbing, tool limits, empty strict MCP config, disabled slash commands,
   and disabled browser integration remain in force. `--safe-mode` disables

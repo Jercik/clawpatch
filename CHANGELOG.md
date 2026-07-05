@@ -6,6 +6,7 @@
 - Added an opt-in Claude host auth context that preserves the default-deny environment, uses Claude Code safe mode, validates auth through doctor, and reports redacted OAuth failure signals, thanks @grantjayy.
 - Raised the Claude provider default timeout from 3 to 20 minutes, since it runs the full Claude Code agentic loop and can wait on subscription rate limits. Override with `CLAWPATCH_CLAUDE_TIMEOUT_MS` or `CLAWPATCH_PROVIDER_TIMEOUT_MS`.
 - The OpenCode provider now passes `--reasoning-effort` through as `opencode run --variant <effort>`; previously the option was silently ignored.
+- Fixed the Claude host auth context on macOS by forwarding `USER`, which Claude Code needs to read the "Claude Code-credentials" keychain item; without it, keychain-stored subscription logins reported "Not logged in".
 
 ## 0.7.0 - 2026-06-15
 
