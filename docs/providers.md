@@ -158,20 +158,21 @@ The `claude` provider shells out to the local
 [Claude Code CLI](https://code.claude.com/docs/en/cli-usage) in non-interactive
 print mode.
 
-Install Claude Code. The default isolated mode accepts an Anthropic API key or
-the supported cloud-provider auth variables:
+Install Claude Code and sign in. This fork defaults to host auth context, so
+the provider uses the configured Claude Code binary's `/login` or setup-token
+auth state — including a Pro/Max subscription — with no extra configuration:
+
+```bash
+clawpatch doctor --provider claude
+clawpatch review --provider claude
+```
+
+To get upstream's default-deny isolated mode back (Anthropic API key or the
+supported cloud-provider auth variables only), opt out explicitly:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-claude --version
-```
-
-To use the configured Claude Code binary's `/login` or setup-token auth state,
-opt into host auth context:
-
-```bash
-CLAWPATCH_CLAUDE_AUTH_CONTEXT=host clawpatch doctor --provider claude
-CLAWPATCH_CLAUDE_AUTH_CONTEXT=host clawpatch review --provider claude
+CLAWPATCH_CLAUDE_AUTH_CONTEXT=isolated clawpatch review --provider claude
 ```
 
 Host auth context requires Claude Code 2.1.169 or newer.

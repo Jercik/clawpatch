@@ -283,11 +283,15 @@ function claudeEnv(
 
 function claudeAuthContext(): ClaudeAuthContext {
   const configured = process.env["CLAWPATCH_CLAUDE_AUTH_CONTEXT"]?.trim().toLowerCase();
-  if (configured === undefined || configured.length === 0 || configured === "isolated") {
-    return "isolated";
-  }
-  if (configured === "host") {
+  // Fork default: host auth context, so the local Claude Code login — including
+  // a Pro/Max subscription — works without setting any environment variable.
+  // Upstream defaults to isolated; set CLAWPATCH_CLAUDE_AUTH_CONTEXT=isolated
+  // to get the default-deny API-key-only sandbox back.
+  if (configured === undefined || configured.length === 0 || configured === "host") {
     return "host";
+  }
+  if (configured === "isolated") {
+    return "isolated";
   }
   throw new ClawpatchError(
     "CLAWPATCH_CLAUDE_AUTH_CONTEXT must be isolated or host",

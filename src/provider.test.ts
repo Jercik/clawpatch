@@ -853,6 +853,9 @@ describe("Claude provider helpers", () => {
 
   it("validates Claude auth context and safe-mode version", () => {
     delete process.env["CLAWPATCH_CLAUDE_AUTH_CONTEXT"];
+    expect(claudeAuthContext()).toBe("host");
+
+    process.env["CLAWPATCH_CLAUDE_AUTH_CONTEXT"] = "isolated";
     expect(claudeAuthContext()).toBe("isolated");
 
     process.env["CLAWPATCH_CLAUDE_AUTH_CONTEXT"] = "host";

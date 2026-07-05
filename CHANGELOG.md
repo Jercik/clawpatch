@@ -7,6 +7,7 @@
 - Raised the Claude provider default timeout from 3 to 20 minutes, since it runs the full Claude Code agentic loop and can wait on subscription rate limits. Override with `CLAWPATCH_CLAUDE_TIMEOUT_MS` or `CLAWPATCH_PROVIDER_TIMEOUT_MS`.
 - The OpenCode provider now passes `--reasoning-effort` through as `opencode run --variant <effort>`; previously the option was silently ignored.
 - Fixed the Claude host auth context on macOS by forwarding `USER`, which Claude Code needs to read the "Claude Code-credentials" keychain item; without it, keychain-stored subscription logins reported "Not logged in".
+- Made host auth context the default for the Claude provider in this fork, so the local Claude Code login (including a Pro/Max subscription) works without setting `CLAWPATCH_CLAUDE_AUTH_CONTEXT=host`. Set `CLAWPATCH_CLAUDE_AUTH_CONTEXT=isolated` to restore upstream's default-deny sandbox.
 
 ## 0.7.0 - 2026-06-15
 
