@@ -23,7 +23,7 @@ From source:
 ```bash
 pnpm install
 pnpm build
-pnpm link --global
+npm link
 ```
 
 ## Workflow
